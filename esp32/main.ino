@@ -13,8 +13,10 @@ const int GRIPPER_SERVO = 3;
 const int SERVO_MIN = 150;
 const int SERVO_MAX = 600;
 
+// Serial input
 String incomingData = "";
 
+// Home position
 int baseAngle = 90;
 int shoulderAngle = 90;
 int elbowAngle = 90;
@@ -46,72 +48,55 @@ void moveArmHome()
 }
 
 
-void processDetection(String data)
+void processGridCommand(String command)
 {
-  data.trim();
+  command.trim();
 
-  if (!data.startsWith("DETECTED,"))
+  if (command.length() != 2)
   {
     return;
   }
 
-  // Remove "DETECTED,"
-  data.remove(0, 9);
+  char column = command.charAt(0);
+  char row = command.charAt(1);
 
-  int firstComma = data.indexOf(',');
-
-  if (firstComma == -1)
+  if (
+    (column != 'L' && column != 'C' && column != 'R') ||
+    (row != '1' && row != '2' && row != '3')
+  )
   {
     return;
   }
 
-  String objectName = data.substring(0, firstComma);
+  Serial.print("Received position: ");
+  Serial.println(command);
 
-  data.remove(0, firstComma + 1);
+  // Basic grid-to-base mapping.
+  // These values are starting points and must be
+  // calibrated with the physical robotic arm.
 
-  int secondComma = data.indexOf(',');
-
-  if (secondComma == -1)
-  {
-    return;
-  }
-
-  int x = data.substring(0, secondComma).toInt();
-  int y = data.substring(secondComma + 1).toInt();
-
-  Serial.print("Object: ");
-  Serial.println(objectName);
-
-  Serial.print("X: ");
-  Serial.println(x);
-
-  Serial.print("Y: ");
-  Serial.println(y);
-
-  Serial.println("--------------------");
-
-  /*
-    Camera coordinates are not servo angles.
-
-    For now we only use them as a basic reference.
-    The actual camera-to-arm calibration will be added
-    after we test the physical arm.
-  */
-
-  if (x < 250)
+  if (column == 'L')
   {
     baseAngle = 80;
   }
-  else if (x > 390)
-  {
-    baseAngle = 100;
-  }
-  else
+  else if (column == 'C')
   {
     baseAngle = 90;
   }
+  else if (column == 'R')
+  {
+    baseAngle = 100;
+  }
 
   setServo(BASE_SERVO, baseAngle);
+
+  Serial.print("Base angle: ");
+  Serial.println(baseAngle);
+
+  // Shoulder, elbow and gripper movement will be
+  // added after physical calibration.
+
+  Serial.println("DONE");
 }
 
 
@@ -129,7 +114,7 @@ void setup()
   moveArmHome();
 
   Serial.println("ESP32 robotic arm controller started.");
-  Serial.println("Waiting for object detection...");
+  Serial.println("Waiting for grid position...");
 }
 
 
@@ -141,10 +126,10 @@ void loop()
 
     if (character == '\n')
     {
-      processDetection(incomingData);
+      processGridCommand(incomingData);
       incomingData = "";
     }
-    else
+    else if (character != '\r')
     {
       incomingData += character;
     }
