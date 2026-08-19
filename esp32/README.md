@@ -1,71 +1,74 @@
-# ESP32 Robotic Arm Controller
+# Hardware
 
-This folder contains the ESP32 code used to control the robotic arm and communicate with the computer vision system.
+This folder documents the main hardware used to build and test the autonomous robotic waste collection system.
 
-## Purpose
-
-The ESP32 acts as the controller between the AI-based vision system and the physical robotic arm.
-
-It receives information from the computer through serial communication and uses a PCA9685 servo driver to control the arm's servos.
-
-## Hardware
+## Main Components
 
 * ESP32-S3 development board
 * PCA9685 16-channel PWM servo driver
-* 4-DOF robotic arm
-* Servo motors
+* 4-DOF acrylic robotic arm with gripper
+* MG90S servo motors
+* USB-C cable
+* Breadboard
+* Jumper wires
 * External 5V power supply
 
-## Servo Channels
+## Robotic Arm
 
-| Channel | Function |
-| ------- | -------- |
-| 0       | Base     |
-| 1       | Shoulder |
-| 2       | Elbow    |
-| 3       | Gripper  |
+The robotic arm has four degrees of freedom:
 
-## Communication
+1. Base rotation
+2. Shoulder movement
+3. Elbow movement
+4. Gripper movement
 
-The ESP32 communicates with the computer using serial communication at **115200 baud**.
-
-The current ESP32 code expects detection messages in this format:
-
-`DETECTED,object_name,x,y`
-
-Example:
-
-`DETECTED,paper_ball,320,240`
-
-The ESP32 reads the object name and the X/Y camera coordinates.
-
-At the current stage, the X coordinate is used to make a basic adjustment to the base servo.
+Each servo is controlled through the PCA9685 servo driver.
 
 ## PCA9685 Servo Driver
 
-The PCA9685 generates the PWM signals used to control the robotic arm's servo motors.
+The PCA9685 provides individual PWM channels for controlling the arm's servos.
 
-It communicates with the ESP32 through the I2C interface.
+The current channel assignment is:
 
-The default PCA9685 I2C address used by the program is:
+| PCA9685 Channel | Function |
+| --------------- | -------- |
+| 0               | Base     |
+| 1               | Shoulder |
+| 2               | Elbow    |
+| 3               | Gripper  |
 
-`0x40`
+## Power
 
-The servo driver operates at:
+The servos are powered using an external 5V power supply instead of drawing their power directly from the ESP32.
 
-`50 Hz`
+The ESP32 and PCA9685 share a common ground so that the control signals have the same electrical reference.
 
-## Current Status
+This is important because the servos can require significantly more current than the ESP32 can safely provide.
 
-The current version successfully initializes the ESP32 and PCA9685, receives detection information through serial communication, and makes a basic base-servo adjustment based on the detected object's horizontal position.
+## Communication
 
-The following parts are still being developed:
+The computer runs the AI-based computer vision system and communicates with the ESP32 through USB serial communication.
 
-* Camera-to-arm calibration
-* Accurate X/Y to robot movement conversion
-* Shoulder and elbow positioning
-* Gripper movement
-* Complete pick-and-place sequence
-* Physical testing and calibration
+The basic system flow is:
 
-This project is being developed incrementally, with the communication and basic servo control tested before implementing the complete autonomous pick-and-place process.
+```text
+Computer Vision
+      ↓
+USB Serial
+      ↓
+ESP32-S3
+      ↓
+PCA9685
+      ↓
+Servo Motors
+      ↓
+Robotic Arm
+```
+
+## Development Status
+
+The hardware is currently being developed and tested alongside the computer vision and control software.
+
+Servo positions, movement limits, arm movement sequences, and camera-to-arm calibration will be refined through physical testing.
+
+The final goal is to achieve reliable detection, positioning, and pick-and-place movement with the robotic arm.
