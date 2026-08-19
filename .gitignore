@@ -256,3 +256,5 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+# Allow the trained model used by the project
+!computer-vision/best.pt
