@@ -1,49 +1,44 @@
 # AI-Based Autonomous Robotic Waste Collection System
 
-An academic AI and Robotics research project exploring computer vision, autonomous decision-making, and robotic manipulation for automated waste collection.
+This is an academic AI and Robotics project focused on building a robotic system that can detect and collect waste with as little human involvement as possible.
 
 ## Project Overview
 
-This project combines a camera-based computer vision system with an ESP32-controlled robotic arm to detect and collect waste objects from a defined working area.
+The system uses a camera to look at a table and a custom-trained YOLO model to detect a target waste object.
 
-A custom-trained YOLO object detection model identifies the target waste object in the camera feed. The detected object's position is converted into a 3 × 3 grid location and transmitted to an ESP32 through serial communication.
+Once an object is detected, the system finds its position within the camera view and divides the working area into a simple 3 × 3 grid. The detected position is then sent to an ESP32 through serial communication.
 
-The ESP32 receives the position command and controls the robotic arm through a PCA9685 servo driver.
+The ESP32 uses this information to control a 4-DOF robotic arm through a PCA9685 servo driver. The arm can then move toward the detected object and use its gripper to pick it up.
 
-The overall goal is to create a system capable of:
+The main idea is to connect **AI-based vision with physical robotic movement** so the robot can make decisions based on what the camera sees.
 
-* Detecting waste using artificial intelligence.
-* Locating the detected object within the robot's working area.
-* Communicating the target position to the robotic controller.
-* Moving the robotic arm toward the detected object.
-* Picking up the object using a gripper.
-* Collecting the object with minimal human intervention.
-
-## System Architecture
+## How the System Works
 
 ```text
 Camera
-  ↓
-OpenCV Video Capture
-  ↓
-Custom YOLO Object Detection
-  ↓
-Object Position / 3 × 3 Grid
-  ↓
+   ↓
+OpenCV
+   ↓
+YOLO Object Detection
+   ↓
+Find Object Position
+   ↓
+3 × 3 Grid Position
+   ↓
 Serial Communication
-  ↓
+   ↓
 ESP32-S3
-  ↓
-PCA9685 Servo Driver
-  ↓
+   ↓
+PCA9685
+   ↓
 4-DOF Robotic Arm
-  ↓
+   ↓
 Gripper
-  ↓
+   ↓
 Waste Collection
 ```
 
-## Technologies
+## Technologies Used
 
 ### Software
 
@@ -85,28 +80,32 @@ vision-guided-robotic-arm/
 └── README.md
 ```
 
-## Computer Vision System
+## Computer Vision
 
-The computer vision subsystem uses a custom-trained YOLO model to detect the target waste object.
+The computer vision part is responsible for understanding what the camera sees.
 
-The detection system:
+The system:
 
-1. Captures frames from the camera.
-2. Runs YOLO object detection.
-3. Selects the strongest detected target.
-4. Calculates the object's center position.
-5. Determines which cell of the 3 × 3 reachable grid contains the object.
-6. Waits for the detection to remain stable.
-7. Sends the grid command to the ESP32.
-8. Waits for the robot to complete its movement.
+1. Captures video from the camera.
+2. Uses the trained YOLO model to look for the target waste object.
+3. Finds the center of the detected object.
+4. Checks which section of the working area contains the object.
+5. Waits for the detection to remain stable.
+6. Converts the position into a grid command.
+7. Sends the command to the ESP32.
+8. Waits for the robotic system to complete its movement.
 
-The main computer vision program is `computer-vision/trash_detection.py`.
+The main program is:
 
-The trained model is `computer-vision/best.pt`.
+`computer-vision/trash_detection.py`
 
-## 3 × 3 Position Grid
+The trained YOLO model is:
 
-The reachable working area is divided into nine logical positions:
+`computer-vision/best.pt`
+
+## 3 × 3 Working Area
+
+To make communication between the vision system and the robotic arm simpler, the reachable area is divided into nine sections:
 
 ```text
 L1 | C1 | R1
@@ -116,24 +115,24 @@ L2 | C2 | R2
 L3 | C3 | R3
 ```
 
-The detected object's center determines which grid position is sent to the ESP32.
+For example, if the detected object is in the centre of the table, the computer vision system can send the `C2` position to the ESP32.
 
-## ESP32 Control
+## ESP32 and Robotic Arm
 
-The ESP32 receives position commands from the computer through serial communication.
+The ESP32 acts as the connection between the computer vision system and the physical robot.
 
-The command identifies the target grid position, allowing the ESP32 to determine the corresponding robotic arm movement.
+It receives the position command from the computer through serial communication and uses the PCA9685 servo driver to control the robotic arm's servo motors.
 
-The PCA9685 servo driver generates the PWM signals required to control the robotic arm's servo motors.
+This allows the computer vision system to identify **where the object is**, while the ESP32 handles **how the robotic arm moves**.
 
 ## Current Development Status
 
-### Implemented
+### Completed
 
-* Custom YOLO object detection model
+* Custom YOLO model training
 * Camera-based object detection
-* Object center-position calculation
-* 3 × 3 workspace grid mapping
+* Object position detection
+* 3 × 3 workspace grid
 * Detection stability checking
 * Computer-to-ESP32 serial communication
 * ESP32 robotic control
@@ -141,45 +140,41 @@ The PCA9685 servo driver generates the PWM signals required to control the robot
 * 4-DOF robotic arm control
 * Gripper control
 
-### Remaining Development
+### Still Being Developed
 
 * Camera-to-robot coordinate calibration
-* Improving positional accuracy
-* Reliable physical pick-and-place operation
+* More accurate object positioning
+* Reliable physical pick-and-place movement
+* Testing with different object positions
 * Testing under different lighting conditions
-* Testing with different object positions and orientations
 * System performance evaluation
-* Full experimental evaluation and documentation
+* Final experimental testing and documentation
 
-## Running the Computer Vision System
+## Running the Computer Vision Program
 
-Navigate to the computer vision directory:
-
-```bash
-cd computer-vision
-```
-
-Install the required dependencies:
+Open a terminal in the `computer-vision` folder and install the required Python packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Connect the ESP32 and make sure the configured serial port matches the port used by the system.
+Make sure the ESP32 is connected and that the serial port configured in `trash_detection.py` matches the port being used.
 
-Run the main computer vision program:
+Then run:
 
 ```bash
 python trash_detection.py
 ```
 
-## Research Objective
+## Project Goal
 
-The project investigates how artificial intelligence and robotic manipulation can be combined to automate simple waste collection tasks.
+The goal of this project is to explore how artificial intelligence and robotics can work together to automate a simple real-world task.
 
-The research focuses on the interaction between:
+Instead of simply detecting an object on a screen, the project connects the AI detection directly to a physical robotic system.
 
-**Artificial Intelligence → Computer Vision → Decision Making → Robotic Control → Physical Manipulation**
+The overall process is:
+
+**See → Detect → Locate → Decide → Move → Pick**
 
 ## Author
 
