@@ -4,9 +4,9 @@ This folder contains the computer vision software for the autonomous robotic was
 
 ## Purpose
 
-The system uses a camera and a YOLO object detection model to identify waste objects on a table.
+The computer vision system uses a camera and a custom-trained YOLO object detection model to identify target waste objects on a table.
 
-When a target object is detected, the detected object's position is used to guide the robotic arm.
+When a target object is detected, the system determines its location in the camera frame and communicates the detection information to the ESP32. The ESP32 then controls the robotic arm to perform the required movement.
 
 ## Main Technologies
 
@@ -15,25 +15,37 @@ When a target object is detected, the detected object's position is used to guid
 - Ultralytics YOLO
 - NumPy
 - PySerial
+- ESP32
 
 ## System Workflow
 
-1. Capture video from the camera.
-2. Detect waste objects using the trained YOLO model.
-3. Identify the position of the detected object.
-4. Send the required movement information to the ESP32.
-5. The ESP32 controls the robotic arm.
-6. The robotic arm picks up the detected waste.
+Camera
+↓
+OpenCV Video Capture
+↓
+YOLO Object Detection
+↓
+Target Detection & Position
+↓
+Serial Communication
+↓
+ESP32
+↓
+PCA9685 Servo Driver
+↓
+Robotic Arm
+↓
+Gripper
 
 ## Files
 
-- `main.py` — Main computer vision program.
-- `best.pt` — Trained YOLO model.
-- `requirements.txt` — Required Python packages.
+- `trash_detection.py` — Main computer vision program.
+- `best.pt` — Custom-trained YOLO model used for waste detection.
+- `requirements.txt` — Python dependencies required to run the computer vision system.
 
 ## Installation
 
-Install the required Python packages using:
+Install the required Python packages:
 
 ```bash
 pip install -r requirements.txt
