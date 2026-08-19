@@ -23,7 +23,6 @@ The goal is to develop a system that can detect, locate, pick up, and collect wa
 
 ## Project Structure
 
-```text
 AI-Robotic-Waste-Collection/
 │
 ├── computer-vision/
@@ -40,3 +39,45 @@ AI-Robotic-Waste-Collection/
 │
 ├── .gitignore
 └── README.md
+
+## System Workflow
+
+Camera
+↓
+YOLO Object Detection
+↓
+Object Position
+↓
+ESP32
+↓
+PCA9685
+↓
+Robotic Arm
+↓
+Waste Collection
+
+## Current Status
+
+The project is currently under development.
+
+Implemented:
+
+- YOLO-based object detection
+- Camera input
+- Computer-to-ESP32 serial communication
+- PCA9685 servo control
+- Basic robotic arm control
+
+Still under development:
+
+- Camera-to-arm calibration
+- Accurate object positioning
+- Pick-and-place movement
+- Gripper control
+- Full autonomous operation
+- Physical testing and evaluation
+
+## Author
+
+AI & Robotics Research Project  
+Sri Lanka
