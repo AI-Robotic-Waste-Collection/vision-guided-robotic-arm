@@ -216,3 +216,43 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ======================================================
+# AI / YOLO PROJECT
+# ======================================================
+
+# YOLO model weights
+*.pt
+*.pth
+*.onnx
+
+# Datasets
+dataset/images/
+dataset/labels/
+dataset/*.zip
+*.zip
+
+# Video recordings
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Camera / experiment temporary files
+experiments/raw/
+experiments/temp/
+
+# Python virtual environments
+.venv/
+venv/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
