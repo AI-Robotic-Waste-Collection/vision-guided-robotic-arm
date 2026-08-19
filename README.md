@@ -1,113 +1,42 @@
-# AI-Based Vision-Guided Autonomous Robotic Arm for Waste Collection
+# AI-Based Autonomous Robotic Waste Collection System
 
-An academic research project investigating the use of artificial intelligence, computer vision, and robotic manipulation for autonomous tabletop waste collection.
+An academic research project exploring artificial intelligence, computer vision, and robotic manipulation for autonomous waste collection.
 
 ## Project Overview
 
-This project develops a robotic system capable of detecting waste objects using a camera, identifying their location using a YOLO-based computer vision model, and controlling a robotic arm to pick up the detected object and place it into a designated collection bin.
+This project uses a camera and a custom-trained YOLO object detection model to identify waste objects on a table.
 
-The system combines:
+When an object is detected, its position is sent to an ESP32. The ESP32 controls a 4-DOF robotic arm through a PCA9685 servo driver.
 
-- Artificial Intelligence
-- Computer Vision
-- Object Detection
-- Robotic Manipulation
-- ESP32 Microcontroller Control
-- Servo Motor Control
-- Autonomous Decision Making
+The goal is to develop a system that can detect, locate, pick up, and collect waste with minimal human intervention.
 
-## System Workflow
-
-Camera
-↓
-Image Capture
-↓
-YOLO Object Detection
-↓
-Object Location
-↓
-Movement Decision
-↓
-ESP32
-↓
-PCA9685 Servo Driver
-↓
-Robotic Arm
-↓
-Gripper
-↓
-Waste Collection Bin
-
-## Hardware
-
-- ESP32-S3 development board
-- PCA9685 16-channel PWM servo driver
-- 4-DOF acrylic robotic arm
-- MG90S servo motors
-- Robotic gripper
-- External 5V power supply
-- USB-C cable
-- Computer for computer-vision processing
-- Camera
-- Collection bin
-
-## Software
+## Technologies
 
 - Python
 - OpenCV
-- Ultralytics YOLO
+- YOLO
+- NumPy
 - PySerial
-- Arduino IDE
-- ESP32 Arduino framework
-
-## AI Model
-
-The project uses a YOLO object-detection model trained on a custom dataset.
-
-The model is designed to detect the target waste object and provide its bounding-box coordinates to the robotic-control system.
-
-The trained model is stored separately from the source code.
+- ESP32-S3
+- PCA9685
+- Arduino/C++
 
 ## Project Structure
 
 ```text
-vision-guided-robotic-arm/
-│
-├── README.md
-├── .gitignore
+AI-Robotic-Waste-Collection/
 │
 ├── computer-vision/
-│   ├── detection.py
-│   ├── camera.py
-│   ├── requirements.txt
+│   ├── main.py
+│   ├── README.md
+│   └── requirements.txt
+│
+├── esp32/
+│   ├── main.ino
 │   └── README.md
-│
-├── robotic-arm/
-│   └── esp32-control/
-│       ├── robotic_arm.ino
-│       └── README.md
-│
-├── model/
-│   └── README.md
-│
-├── dataset/
-│   └── README.md
-│
-├── experiments/
-│   ├── test-results.csv
-│   └── results.md
 │
 ├── hardware/
-│   ├── components.md
-│   ├── wiring.md
-│   └── calibration.md
+│   └── README.md
 │
-└── docs/
-    ├── project-overview.md
-    ├── problem-statement.md
-    ├── objectives.md
-    ├── methodology.md
-    ├── system-architecture.md
-    ├── testing.md
-    ├── limitations.md
-    └── future-work.md
+├── .gitignore
+└── README.md
